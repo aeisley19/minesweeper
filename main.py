@@ -1,3 +1,4 @@
+#from tkinter import ttk;
 from tkinter import *;
 import random as rand;
 
@@ -7,35 +8,31 @@ class Board:
         self.width = width;
         self.height = height;
         self.mines = mines;
+        self.matrix = [];
  
     def init_board(self):
-        matrix = [];
-
-        buttons = [];
-
         for i in range(self.width):
-            matrix.append([]);
-            for j in range(self.width):
+            self.matrix.append([]);
+            for j in range(self.height):
                 sp = Space(self.master, i, j);
-                matrix[i].append(sp);
-                #buttons.append(Button(self.master, text="hi").grid(row=1, column=1));
-                matrix[i][j].display();
+                self.matrix[i].append(sp);
+                self.matrix[i][j].create_button(self.master);
+                self.matrix[i][j].get_button().grid(column=i, row=j);
+
+    def set_mines(self):
+
         minepos_x = 0;
         minepos_y = 0;
-
-
-
-    def set_mines(self, matrix):
         
         i = self.mines;
         while i > 0:
             minepos_x = rand.randint(0, self.width - 1);
             minepos_y = rand.randint(0, self.height - 1);
 
-            if matrix[minepos_x][minepos_y].get_mine():
+            if self.matrix[minepos_x][minepos_y].get_mine():
                 pass;
             else:
-                matrix[minepos_x][minepos_y].set_mine();
+                self.matrix[minepos_x][minepos_y].set_mine();
                 i -= 1;
     
     def draw_board_tl(self):
@@ -56,6 +53,7 @@ class Space:
         self.near_mines = 0;
         self.position = [x, y];
         self.master = master;
+        self.button = None;
 
     def set_mine(self):
         self.is_mine = True;
@@ -65,25 +63,40 @@ class Space:
 
     def set_is_hidden(self):
         self.is_hidden = False;
-
+ 
     def get_is_hidden(self):
         return self.is_hidden;
 
     def get_position(self):
         return self.position;
 
+    def create_button(self, frame):
+        btn = Button(frame);
+        self.button = btn;
+    
+    def get_button(self):
+        return self.button;
+
     def display(self):
         button = Button(self.master, text="");
-        button.grid(row=self.position[0], column=self.position[1]);
+        #button.grid(row=self.position[0], column=self.position[1]);
 
 def play():
     root = Tk();
     root.title("Mine Sweeper");
-    root.geometry('350x450')
+    root.geometry('1440x720');
+    root.resizable(False, False);
+    root.configure(bg="black")
 
-    b = Board(root, 9, 9, 9)
+    game_frame = Frame(root, width=1000, height=500, borderwidth=10, relief=RIDGE);
+    game_frame.place(x=600, y=200);
+    #label = Label(frame, text="Label in frame");
+    #label.pack();
+    
+    b = Board(game_frame, 6, 6, 7)
     b.init_board();
 
     root.mainloop();
 
-play();
+if __name__ == "__main__":
+    play();
