@@ -16,11 +16,9 @@ class Board:
             for j in range(self.height):
                 sp = Space(self.master, i, j);
                 self.matrix[i].append(sp);
-                self.matrix[i][j].create_button(self.master);
-                self.matrix[i][j].get_button().grid(column=i, row=j);
-
+                self.matrix[i][j].create_button(self.master, i, j);
+    
     def set_mines(self):
-
         minepos_x = 0;
         minepos_y = 0;
         
@@ -70,10 +68,17 @@ class Space:
     def get_position(self):
         return self.position;
 
-    def create_button(self, frame):
-        btn = Button(frame);
-        self.button = btn;
+    def create_button(self, frame, x, y):
+        self.button = Button(frame);
+        self.button.grid(column=x, row=y);
+        self.button.bind("<Button-1>", self.clicker);
     
+    def clicker(self, event):
+        print("clicked", self.position);
+    
+        if(self.is_mine):
+            print("mine");
+        
     def get_button(self):
         return self.button;
 
@@ -81,22 +86,24 @@ class Space:
         button = Button(self.master, text="");
         #button.grid(row=self.position[0], column=self.position[1]);
 
-def play():
-    root = Tk();
-    root.title("Mine Sweeper");
-    root.geometry('1440x720');
-    root.resizable(False, False);
-    root.configure(bg="black")
+class Game:
+    def play(self):
+        root = Tk();
+        root.title("Mine Sweeper");
+        root.geometry('1440x720');
+        root.resizable(False, False);
+        root.configure(bg="black")
 
-    game_frame = Frame(root, width=1000, height=500, borderwidth=10, relief=RIDGE);
-    game_frame.place(x=600, y=200);
-    #label = Label(frame, text="Label in frame");
-    #label.pack();
-    
-    b = Board(game_frame, 6, 6, 7)
-    b.init_board();
+        game_frame = Frame(root, width=1000, height=500, borderwidth=10, relief=RIDGE);
+        game_frame.place(x=600, y=200);
+        
+        b = Board(game_frame, 6, 6, 7)
+        b.init_board();
 
-    root.mainloop();
+        root.mainloop();
+
 
 if __name__ == "__main__":
-    play();
+    game = Game();
+    
+    game.play();
